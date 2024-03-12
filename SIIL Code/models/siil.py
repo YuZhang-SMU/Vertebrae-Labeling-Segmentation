@@ -19,7 +19,7 @@ class SIIL(nn.Module):
         self.frozen_epoch = 10
 
         self.EN, en_ch = generate_model(model_depth=10, n_classes=26)
-        self.myNetwork_core = SIIL_core(feature_dim, self.config)
+        self.SIIL_core = SIIL_core(feature_dim, self.config)
         self.DE = Decoder(en_ch)
 
         self.initialize_weights()
@@ -32,9 +32,9 @@ class SIIL(nn.Module):
         self.apply(self._init_weights)
 
         # initialize patch_embed like nn.Linear (instead of nn.Conv2d)
-        w = self.myNetwork_core.R_token_proj.weight.data
+        w = self.SIIL_core.R_token_proj.weight.data
         torch.nn.init.xavier_uniform_(w.view([w.shape[0], -1]))
-        w = self.myNetwork_core.S_token_proj.weight.data
+        w = self.SIIL_core.S_token_proj.weight.data
         torch.nn.init.xavier_uniform_(w.view([w.shape[0], -1]))
 
     def _init_weights(self, m):
@@ -80,7 +80,7 @@ class SIIL(nn.Module):
         fea_tilde_R = list()
         fea_tilde_S = list()
         for i in range(batch_size):
-            output = self.myNetwork_core(fea_F[i], fea_C_bool[i], msk_loc_low[i], epoch=epoch, index=index, val=val, test=test)
+            output = self.SIIL_core(fea_F[i], fea_C_bool[i], msk_loc_low[i], epoch=epoch, index=index, val=val, test=test)
             each_loss_L, each_loss_M, each_tilde_R, each_tilde_S = output
             loss_L += (each_loss_L / batch_size)
             loss_M += (each_loss_M / batch_size)
