@@ -1,4 +1,4 @@
-# Semantics and Instance Interactive Learning for Labeling and Segmentation of Vertebrae in CT Images  
+# Semantics and Instance Interactive Learning for Labeling and Segmentation of Vertebrae in CT Images [MIA'25] 
 
 [**Link to the Paper**](https://www.sciencedirect.com/science/article/abs/pii/S1361841524003050)  
 
