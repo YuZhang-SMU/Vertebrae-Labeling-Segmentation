@@ -15,16 +15,16 @@
 The main contributions of this paper are as follows:  
 
 1. **New Learning Paradigm**  
-   We introduce a new paradigm based on semantics and instance in-teractive learning, namely SIIL, for synchronous labeling and seg-mentation of vertebrae in CT images. Feature interaction embod-ies to help learn position and contour information, and improvethe separability of vertebral instances.  
+   We introduce a new paradigm based on semantics and instance interactive learning, namely SIIL, for synchronous labeling and segmentation of vertebrae in CT images. Feature interaction embodies to help learn position and contour information, and improve the separability of vertebral instances.  
 
 2. **MILL Module**  
-   We propose an MILL module to facilitate the interaction betweensemantic and instance features, which introduces an instancelocalization matrix to filter out absent vertebrae and alleviatetheir interference.
+   We propose an MILL module to facilitate the interaction between semantic and instance features, which introduces an instance localization matrix to filter out absent vertebrae and alleviate their interference.
 
 3. **OCPL Module**  
-   We design an OCPL module to mitigate the high similarity of adja-cent vertebrae by modeling the intrinsic sequential relationship ofinstance features via Bi-GRU, and enhance inter-class separabilityand intra-class consistency via cross-image contrastive learning. 
+   We design an OCPL module to mitigate the high similarity of adjacent vertebrae by modeling the intrinsic sequential relationship of instance features via Bi-GRU, and enhance inter-class separability and intra-class consistency via cross-image contrastive learning. 
 
 4. **Extensive Experiments**  
-   We conduct extensive experiments to demonstrate the effective-ness of the proposed method, and it achieves optimal performancein three public datasets.
+   We conduct extensive experiments to demonstrate the effectiveness of the proposed method, and it achieves optimal performance in three public datasets.
 
 ---
 
