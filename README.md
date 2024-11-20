@@ -15,16 +15,16 @@
 The main contributions of this paper are as follows:  
 
 1. **New Learning Paradigm**  
-   We introduce a new paradigm based on semantics and instance interactive learning, namely **SIIL**, for synchronous labeling and segmentation of vertebrae in CT images. Feature interaction helps learn positional and contour information, improving the separability of vertebral instances.  
+   We introduce a new paradigm based on semantics and instance in-teractive learning, namely SIIL, for synchronous labeling and seg-mentation of vertebrae in CT images. Feature interaction embod-ies to help learn position and contour information, and improvethe separability of vertebral instances.  
 
 2. **MILL Module**  
-   We propose the **MILL** module to facilitate interaction between semantic and instance features. This module introduces an instance localization matrix to filter out absent vertebrae and reduce interference.  
+   We propose an MILL module to facilitate the interaction betweensemantic and instance features, which introduces an instancelocalization matrix to filter out absent vertebrae and alleviatetheir interference.
 
 3. **OCPL Module**  
-   We design the **OCPL** module to mitigate the high similarity of adjacent vertebrae by modeling the intrinsic sequential relationship of instance features via **Bi-GRU**. It enhances inter-class separability and intra-class consistency through cross-image contrastive learning.  
+   We design an OCPL module to mitigate the high similarity of adja-cent vertebrae by modeling the intrinsic sequential relationship ofinstance features via Bi-GRU, and enhance inter-class separabilityand intra-class consistency via cross-image contrastive learning. 
 
 4. **Extensive Experiments**  
-   We conduct comprehensive experiments to demonstrate the effectiveness of the proposed method, achieving optimal performance on three public datasets.  
+   We conduct extensive experiments to demonstrate the effective-ness of the proposed method, and it achieves optimal performancein three public datasets.
 
 ---
 
