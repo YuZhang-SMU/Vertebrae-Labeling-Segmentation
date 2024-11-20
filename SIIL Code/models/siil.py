@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -51,7 +52,11 @@ class SIIL(nn.Module):
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
-    def forward(self, img, msk, epoch=0, index=None, val=False, test=False):
+    def forward(self, data, epoch=0, index=None, val=False, test=False):
+        img = data['image']['data'].permute(0, 1, 4, 2, 3).to(torch.float32).to(my_device)
+        msk = data['label']['data'].permute(0, 1, 4, 2, 3).to(torch.float32).to(my_device)
+
+        # print(img.shape, msk.shape)
         batch_size = msk.shape[0]
 
         msk_binary = msk.clone()
@@ -72,20 +77,30 @@ class SIIL(nn.Module):
 
         # ---------------------------encoder----------------------------------------
         fea_F1, fea_F2, fea_F3, fea_F, fea_C = self.EN(img)
-        fea_C_bool = torch.sigmoid(fea_C) > 0.5
+        fea_C_bool = torch.sigmoid(fea_C) > 0.1
 
         # ---------------------------core----------------------------------------
         loss_L = torch.zeros(1, dtype=torch.float32).to(my_device)
         loss_M = torch.zeros(1, dtype=torch.float32).to(my_device)
         fea_tilde_R = list()
         fea_tilde_S = list()
+        batch_work = torch.ones(batch_size)
         for i in range(batch_size):
+            if torch.all(fea_C_bool[i]) == False:
+                batch_work[i] = 0
+                continue
             output = self.SIIL_core(fea_F[i], fea_C_bool[i], msk_loc_low[i], epoch=epoch, index=index, val=val, test=test)
             each_loss_L, each_loss_M, each_tilde_R, each_tilde_S = output
             loss_L += (each_loss_L / batch_size)
             loss_M += (each_loss_M / batch_size)
             fea_tilde_R.append(each_tilde_R.unsqueeze(0))
             fea_tilde_S.append(each_tilde_S.unsqueeze(0))
+
+        if not torch.any(batch_work):
+            return {
+                'seg_one_final': torch.zeros_like(msk_binary),
+                'seg_multi_final': torch.zeros_like(msk_onehot),
+            }
         fea_tilde_R = torch.cat(fea_tilde_R, dim=0)
         fea_tilde_S = torch.cat(fea_tilde_S, dim=0)
 
@@ -93,9 +108,9 @@ class SIIL(nn.Module):
         fea_O_R, fea_O_S = self.DE(
             fea_tilde_R,
             fea_tilde_S,
-            fea_F1,
-            fea_F2,
-            fea_F
+            fea_F1[batch_work!=0],
+            fea_F2[batch_work!=0],
+            fea_F[batch_work!=0]
         )
 
         if test:
@@ -105,19 +120,30 @@ class SIIL(nn.Module):
             }
 
         # loss
-        cls_loss = 20 * self._cls_loss(fea_C[:, 1:], msk_id[:, 1:])
         seg_loss1 = self._dc_ce_loss_binary(fea_O_R, msk_binary)
         seg_loss2 = self._dc_ce_loss(fea_O_S, msk_onehot, msk_loc)
         pseudo_loss1 = self._dc_ce_loss(fea_tilde_S, msk_onehot_low, msk_loc_low)
         pseudo_loss2 = self._dc_ce_loss_binary(fea_tilde_R, msk_binary_low)
 
-        seg_loss = seg_loss1 + seg_loss2
-        pseudo_loss = pseudo_loss1 + pseudo_loss2
-        loss_M = 0.05 * loss_M
-        loss_L = 0.5 * loss_L
-        final_loss = seg_loss + pseudo_loss + loss_M + loss_L + cls_loss
+        loss_T = seg_loss1 + seg_loss2 + pseudo_loss1 + pseudo_loss2
+        loss_C = self._cls_loss(fea_C[:, 1:], msk_id[:, 1:])
 
-        loss_dict = {'final_loss': final_loss,}
+        final_loss = loss_T + loss_L + 20 * loss_C + 0.05 * loss_M
+
+        loss_dict = {
+            'final_loss': final_loss,
+            'loss_T': loss_T,
+            'loss_L': loss_L,
+            'loss_C': 20 * loss_C,
+            'loss_M': 0.05 * loss_M,
+        }
+        print(
+            'final_loss: {:.5f}'.format(final_loss.item()), '||',
+            'loss_T: {:.5f}'.format(loss_T.item()), '||',
+            'loss_L: {:.5f}'.format(loss_L.item()), '||',
+            'loss_C: {:.5f}'.format(20 * loss_C.item()), '||',
+            'loss_M: {:.5f}'.format(0.05 * loss_M.item()),
+        )
         return loss_dict
 
 

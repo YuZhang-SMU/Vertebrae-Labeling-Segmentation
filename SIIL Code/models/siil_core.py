@@ -133,7 +133,7 @@ class SIIL_core(nn.Module):
         # ---------------------------To image-----------------------------------
         each_tilde_R = self.forward_Deconstruction_R(fea_R3)
         each_tilde_S = self.forward_Deconstruction_S(fea_S3, fea_L.to(torch.bool))
-        print(fea_hat_L.shape, msk_loc_low.shape)
+        # print(fea_hat_L.shape, msk_loc_low.shape)
         # ---------------------------loss-----------------------------------
         each_loss_L = self._loc_loss(fea_hat_L, msk_loc_low)
         if not (test or val):

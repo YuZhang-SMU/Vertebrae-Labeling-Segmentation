@@ -8,7 +8,7 @@ class FocalLoss(nn.Module):
                  alpha=0.25,
                  gamma=2,
                  reduction='mean',):
-        super(FocalLossV1, self).__init__()
+        super(FocalLoss, self).__init__()
         self.alpha = alpha
         self.gamma = gamma
         self.reduction = reduction
