@@ -1,7 +1,7 @@
 class MyConfig(object):
 
     def __init__(self):
-        self.TITLE = ''
+        self.TITLE = 'SIIL'
         self.DATASET = 'CTSpine1K'
         self.BATCH_SIZE = 2
         self.EPOCH = 200
@@ -12,3 +12,6 @@ class MyConfig(object):
         self.para_q = 32
         self.para_k = 4
         self.para_gamma = 0.95
+
+        self.data_path = 'PROJECT_PATH/data'
+        self.latest_model = 'PROJECT_PATH/latest_model'
