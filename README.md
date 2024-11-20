@@ -57,8 +57,8 @@ Project/
 - **`data/img`**: Directory containing processed image data in `.nii.gz` format.  
 - **`data/msk`**: Directory containing processed mask data in `.nii.gz` format.
 - **`data/pap`**: Directory containing processed probability map in `.nii.gz` format. (only used for training)  
-- **`training.txt`**: A text file containing patient names used for the training data.  
-- **`testing.txt`**: A text file containing patient names used for the testing data.
+- **`data/training.txt`**: A text file containing patient names used for the training data.  
+- **`data/testing.txt`**: A text file containing patient names used for the testing data.
 
 ---
 
