@@ -115,7 +115,7 @@ class SIIL(nn.Module):
 
         if test:
             seg_one_final = torch.zeros_like(msk_binary)
-            seg_one_final[batch_work!=0] = fea_O_R
+            seg_one_final[batch_work != 0] = fea_O_R
 
             seg_multi_final = torch.zeros_like(msk_onehot)
             seg_multi_final[batch_work != 0] = fea_O_S
