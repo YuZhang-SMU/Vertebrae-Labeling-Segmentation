@@ -56,7 +56,6 @@ class SIIL(nn.Module):
         img = data['image']['data'].permute(0, 1, 4, 2, 3).to(torch.float32).to(my_device)
         msk = data['label']['data'].permute(0, 1, 4, 2, 3).to(torch.float32).to(my_device)
 
-        # print(img.shape, msk.shape)
         batch_size = msk.shape[0]
 
         msk_binary = msk.clone()
@@ -77,7 +76,7 @@ class SIIL(nn.Module):
 
         # ---------------------------encoder----------------------------------------
         fea_F1, fea_F2, fea_F3, fea_F, fea_C = self.EN(img)
-        fea_C_bool = torch.sigmoid(fea_C) > 0.1
+        fea_C_bool = torch.sigmoid(fea_C) >= 0.5
 
         # ---------------------------core----------------------------------------
         loss_L = torch.zeros(1, dtype=torch.float32).to(my_device)
@@ -86,7 +85,7 @@ class SIIL(nn.Module):
         fea_tilde_S = list()
         batch_work = torch.ones(batch_size)
         for i in range(batch_size):
-            if torch.all(fea_C_bool[i]) == False:
+            if test and (not torch.any(fea_C_bool[i])):
                 batch_work[i] = 0
                 continue
             output = self.SIIL_core(fea_F[i], fea_C_bool[i], msk_loc_low[i], epoch=epoch, index=index, val=val, test=test)
@@ -96,11 +95,12 @@ class SIIL(nn.Module):
             fea_tilde_R.append(each_tilde_R.unsqueeze(0))
             fea_tilde_S.append(each_tilde_S.unsqueeze(0))
 
-        if not torch.any(batch_work):
+        if test and (not torch.any(batch_work)):
             return {
                 'seg_one_final': torch.zeros_like(msk_binary),
                 'seg_multi_final': torch.zeros_like(msk_onehot),
             }
+
         fea_tilde_R = torch.cat(fea_tilde_R, dim=0)
         fea_tilde_S = torch.cat(fea_tilde_S, dim=0)
 
@@ -114,9 +114,15 @@ class SIIL(nn.Module):
         )
 
         if test:
+            seg_one_final = torch.zeros_like(msk_binary)
+            seg_one_final[batch_work!=0] = fea_O_R
+
+            seg_multi_final = torch.zeros_like(msk_onehot)
+            seg_multi_final[batch_work != 0] = fea_O_S
+
             return {
-                'seg_one_final': fea_O_R,
-                'seg_multi_final': fea_O_S,
+                'seg_one_final': seg_one_final,
+                'seg_multi_final': seg_multi_final,
             }
 
         # loss
