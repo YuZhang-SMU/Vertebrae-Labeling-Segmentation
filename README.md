@@ -1,3 +1,7 @@
+We found that several open-source articles (e.g., those involving bi-mapping, intra-inter class term, feature redundancy-relevancy term, etc.) were referenced, either in terms of ideas or writing style (such as in some journals whose titles begin with "expert" or "medical"), without proper citation or with intentional omission. Therefore, we have temporarily taken the source code offline. Sorry for this decision. If needed, please feel free to contact us via email, and we will be happy to provide the code upon request.
+
+
+
 # Semantics and Instance Interactive Learning for Labeling and Segmentation of Vertebrae in CT Images [MIA'25] 
 
 [**Link to the Paper**](https://www.sciencedirect.com/science/article/abs/pii/S1361841524003050)  
